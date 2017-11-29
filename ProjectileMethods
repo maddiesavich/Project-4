@@ -1,0 +1,33 @@
+/*Madalyne Savich and Ana Acuna
+msavich2 and aacuna
+Project 4
+Lab Section: Tuesday/Thursday 11:05-12:20*/
+
+public class ProjectileMethods {
+
+	// Initialize
+	protected double speed, angle, time;
+
+	// Constructor for variables
+	public ProjectileMethods(double speed, double angle, double time) {
+		super();
+		this.speed = speed;
+		this.angle = angle;
+		this.time = time;
+	}
+
+	// Methods to calculate trajectory
+	// Method for distance traveled in x direction
+	public double trajectoryX(double speed, double angle, double time) {
+		double trajectoryX = Math.abs((speed) * (Math.cos(angle)) * (time));
+		return trajectoryX;
+	}
+
+	// Method for distance traveled in Y direction
+	public double trajectoryY(double speed, double angle, double time) {
+		double trajectoryY = Math
+				.abs((speed) * (Math.sin(angle)) * (time) - (1 / 2) * (-9.8) * Math.pow(time, 2) - 1000);
+		return trajectoryY;
+	}
+
+}
