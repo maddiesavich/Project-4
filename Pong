@@ -1,0 +1,75 @@
+/*Madalyne Savich and Ana Acuna
+msavich2 and aacuna
+Project 4
+Lab Section: Tuesday/Thursday 11:05-12:20*/
+
+import java.awt.Color;
+import java.awt.Graphics;
+import javax.swing.JComponent;
+public class Pong extends JComponent {
+	// Initialize
+	private Graphics g;
+	protected static double speed = 60;
+	protected static double angle;
+	protected static double time;
+	int posBallX = 0;
+	int posBallY = 0;
+	int posRectX = 0;
+	int posRectY = 0;
+	protected int height = getHeight();
+	protected int width = getWidth();
+
+	// Create instance for methods
+	static ProjectileMethods projectile = new ProjectileMethods(speed, angle, time);
+
+	// Constructor
+	public Pong(double speed, double time, double angle) {
+		super();
+		this.speed = speed;
+		this.angle = angle;
+		this.time = time;
+	}
+
+	public void paintComponent(Graphics g) {
+		drawRect(g);
+		drawBallPath(g);
+		drawBall(g);
+	}
+
+	// Method to draw the moving pad
+	private void drawRect(Graphics g2) {
+		g.setColor(Color.BLUE);
+		g.drawRect(0, 800, 100, 100);
+		repaint();
+	}
+
+	// Method to draw the path of the ball
+	private void drawBallPath(Graphics g) {
+		 g.setColor(Color.GREEN);
+	     g.drawOval(0, 750, posRectX - 25, posRectY - 25);
+//		for (int i = 0; i < time; i += 0.1) {
+//			int xOne = (int) ((speed) * (Math.cos(Math.toRadians(angle))) * i);
+//			int yOne = (int) ((speed * (Math.sin(Math.toRadians(angle))) * i));
+//			g.fillOval(xOne, yOne, 7, 7);
+//		}
+		repaint();
+	}
+
+	// Method to draw the ball
+	private void drawBall(Graphics g2) {
+		int xTwo = (int) ((speed) * (Math.cos(Math.toRadians(angle))) * time);
+		int yTwo = (int) ((9.8 * ((speed * (Math.sin(Math.toRadians(angle)))) * time - 0.5 * (9.8) * time * time)));
+		// Draw circles that have an increasing radius
+		for (int i = 120; i >= 10; i = i - 10) {
+			g.drawOval(posBallX - i, ((height - posBallY) - i), 2 * i, 2 * i);
+		}
+		repaint();
+	}
+
+	public static void main(String[] args) {
+
+		// Call method to create the screen
+		Canvas.screen();
+	}
+
+}
