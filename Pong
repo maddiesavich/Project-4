@@ -1,75 +1,127 @@
-/*Madalyne Savich and Ana Acuna
-msavich2 and aacuna
-Project 4
-Lab Section: Tuesday/Thursday 11:05-12:20*/
-
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.Timer;
+
 public class Pong extends JComponent {
-	// Initialize
-	private Graphics g;
-	protected static double speed = 60;
-	protected static double angle;
-	protected static double time;
-	int posBallX = 0;
-	int posBallY = 0;
-	int posRectX = 0;
-	int posRectY = 0;
-	protected int height = getHeight();
-	protected int width = getWidth();
-
-	// Create instance for methods
-	static ProjectileMethods projectile = new ProjectileMethods(speed, angle, time);
-
+	int width = getWidth();
+	int height = getHeight();
+	Timer timer;
+	protected int rectWidth = 90;
+	protected int rectHeight = 25;
+	protected int squareLocationX = 0;
+	protected int squareLocationY = 0;
+	protected int ballLocationX = 0;
+	protected int ballLocationY = 0;
+	protected int screenwidth = 1000;
+	protected int screenheight = 1000;
+	protected int velocity;
+	protected int trajectoryX;
+	protected int trajectoryY;
+	
 	// Constructor
-	public Pong(double speed, double time, double angle) {
-		super();
-		this.speed = speed;
-		this.angle = angle;
-		this.time = time;
+	public Pong() {
+		timer = new Timer(50, new TimerCallback());
+		timer.start();
 	}
 
-	public void paintComponent(Graphics g) {
-		drawRect(g);
-		drawBallPath(g);
-		drawBall(g);
-	}
-
-	// Method to draw the moving pad
-	private void drawRect(Graphics g2) {
-		g.setColor(Color.BLUE);
-		g.drawRect(0, 800, 100, 100);
-		repaint();
-	}
-
-	// Method to draw the path of the ball
-	private void drawBallPath(Graphics g) {
-		 g.setColor(Color.GREEN);
-	     g.drawOval(0, 750, posRectX - 25, posRectY - 25);
-//		for (int i = 0; i < time; i += 0.1) {
-//			int xOne = (int) ((speed) * (Math.cos(Math.toRadians(angle))) * i);
-//			int yOne = (int) ((speed * (Math.sin(Math.toRadians(angle))) * i));
-//			g.fillOval(xOne, yOne, 7, 7);
-//		}
-		repaint();
-	}
-
-	// Method to draw the ball
-	private void drawBall(Graphics g2) {
-		int xTwo = (int) ((speed) * (Math.cos(Math.toRadians(angle))) * time);
-		int yTwo = (int) ((9.8 * ((speed * (Math.sin(Math.toRadians(angle)))) * time - 0.5 * (9.8) * time * time)));
-		// Draw circles that have an increasing radius
-		for (int i = 120; i >= 10; i = i - 10) {
-			g.drawOval(posBallX - i, ((height - posBallY) - i), 2 * i, 2 * i);
+	protected class TimerCallback implements ActionListener, KeyListener {
+		
+		public TimerCallback() {
+			addKeyListener(this);
+			setFocusable(true);
 		}
-		repaint();
+
+		// KeyListener Methods
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+				System.out.println("Key Pressed" + e.getKeyCode());
+				squareLocationX = -2;
+				repaint();
+			} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				System.out.println("Key Pressed" + e.getKeyCode());
+				squareLocationX = +2;
+				repaint();
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			screenwidth = getWidth();
+			screenheight = getHeight();
+
+			// Boundary to stop the pad from moving past the boundary on either end
+			if (((squareLocationX + rectWidth) >= screenwidth) || (squareLocationY + rectHeight) >= screenheight) {
+				squareLocationX = 0;
+				squareLocationY = 600;
+			}
+			
+			// squareLocationX += 1;
+			
+			// If ball bounces off top wall
+			if (ballLocationY == 10) {
+				// Make positive velocity in the y direction negative
+				trajectoryY = (trajectoryY) * (-1);
+			}
+			// If ball bounces off moving pad
+			else if (squareLocationY == ballLocationY) {
+				// Make negative velocity in the y direction positive
+				trajectoryY = (trajectoryY) * (-1);
+			}
+			// If ball bounces off right boundary
+			else if (ballLocationY == 0 && trajectoryX > 0) {
+				// Make velocity in the x direction move to the left (negative)
+				trajectoryX = (trajectoryX) * (-1);
+			}
+			// If ball bounces off left boundary
+			else if (ballLocationY == 0 && trajectoryX > 0) {
+				// Make velocity in the x direction move to the left (positive)
+				trajectoryX = (trajectoryX) * (-1);
+			}
+			repaint();
+		}
+
 	}
 
-	public static void main(String[] args) {
+	// Paint Component
+	@Override
+	public void paintComponent(Graphics g) {
+		// Paint black background
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, 1000, 1000);
+		
+		// Paint the pong pad
+		g.setColor(Color.BLUE);
+		g.fillRect(squareLocationX, squareLocationY, rectWidth, rectHeight);
 
-		// Call method to create the screen
-		Canvas.screen();
+	}
+
+	// Create Canvas
+	public static void main(String[] args) {
+		JFrame frame = new JFrame("PONG!");
+		Pong canvas = new Pong();
+		frame.add(canvas);
+		frame.setSize(1000, 1000);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
 	}
 
 }
