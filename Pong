@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.Timer;
 
 public class Pong extends JComponent {
+	// Initialize
+	protected Graphics g;
 	int width = getWidth();
 	int height = getHeight();
 	Timer timer;
@@ -22,18 +25,25 @@ public class Pong extends JComponent {
 	protected int ballLocationY = 0;
 	protected int screenwidth = 1000;
 	protected int screenheight = 1000;
-	protected int velocity;
 	protected int trajectoryX;
 	protected int trajectoryY;
-	
+	protected double speed = 100;
+	protected double angle = 45;
+	protected double time = 15;
+	protected double points;
+
 	// Constructor
 	public Pong() {
+		// Set layout to place labels to the right
+		setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+		// Timer
 		timer = new Timer(50, new TimerCallback());
 		timer.start();
 	}
 
 	protected class TimerCallback implements ActionListener, KeyListener {
-		
+
 		public TimerCallback() {
 			addKeyListener(this);
 			setFocusable(true);
@@ -62,7 +72,7 @@ public class Pong extends JComponent {
 		public void keyTyped(KeyEvent e) {
 
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			screenwidth = getWidth();
@@ -73,7 +83,9 @@ public class Pong extends JComponent {
 				squareLocationX = 0;
 				squareLocationY = 600;
 			}
-			
+
+			// Keeping track of the score based on situations of what the ball's position
+			// may be
 			// If ball bounces off top wall
 			if (ballLocationY == 10) {
 				// Make positive velocity in the y direction negative
@@ -83,6 +95,7 @@ public class Pong extends JComponent {
 			else if (squareLocationY == ballLocationY) {
 				// Make negative velocity in the y direction positive
 				trajectoryY = (trajectoryY) * (-1);
+				points++;
 			}
 			// If ball bounces off right boundary
 			else if (ballLocationY == 0 && trajectoryX > 0) {
@@ -93,6 +106,8 @@ public class Pong extends JComponent {
 			else if (ballLocationY == 0 && trajectoryX > 0) {
 				// Make velocity in the x direction move to the left (positive)
 				trajectoryX = (trajectoryX) * (-1);
+			} else {
+				points -= 3;
 			}
 			repaint();
 		}
@@ -105,11 +120,53 @@ public class Pong extends JComponent {
 		// Paint black background
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, 1000, 1000);
-		
+
 		// Paint the pong pad
 		g.setColor(Color.BLUE);
 		g.fillRect(squareLocationX, squareLocationY, rectWidth, rectHeight);
 
+		// Call method to draw the ball
+		drawBall(g);
+
+		// Set text for lives and score
+		g.setColor(Color.MAGENTA);
+		g.setFont(new Font("Arial", Font.ITALIC, 14));
+		g.drawString("LIVES: ", 815, 55);
+		g.drawString("SCORE: ", 815, 100);
+
+		// Draw the lives
+		drawLife1(g);
+		drawLife2(g);
+		drawLife3(g);
+	}
+
+	// Method to paint the ball
+	public void drawBall(Graphics g) {
+		g.setColor(Color.GREEN);
+		g.fillOval(ballLocationX - 10, ballLocationY - 10, 20, 20);
+		repaint();
+	}
+
+	// Method to paint the first life
+	public void drawLife1(Graphics g) {
+		// Paint the life
+		g.setColor(Color.RED);
+		g.fillOval(875 - 10, 50 - 10, 20, 20);
+		repaint();
+	}
+
+	// Method to paint the second life
+	public void drawLife2(Graphics g) {
+		g.setColor(Color.RED);
+		g.fillOval(900 - 10, 50 - 10, 20, 20);
+		repaint();
+	}
+
+	// Method to paint the third life
+	public void drawLife3(Graphics g) {
+		g.setColor(Color.RED);
+		g.fillOval(925 - 10, 50 - 10, 20, 20);
+		repaint();
 	}
 
 	// Create Canvas
