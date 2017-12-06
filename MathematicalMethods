@@ -1,0 +1,65 @@
+/*Madalyne Savich and Ana Acuna
+msavich2 and aacuna
+Project 3
+Lab Section: Tuesday/Thursday 11:05-12:20*/
+
+public class MathematicalMethods {
+    
+	// Initialize
+	private Game engine;
+    private int signX = 1;
+    private int signY = 1;
+    private int angle = 55;
+    private double velocity = 3;
+//    private double time = 1;
+
+    MathematicalMethods(Game engine) {
+        this.engine = engine;
+    }
+
+    // Parabolic equations for projectile motion
+    int getXPosition(int x) {
+        return x + signX * (int) Math.round(velocity * Math.cos(Math.toRadians(angle)));
+    }
+    int getYPosition(int y) {
+        return y - signY * (int) Math.round(velocity * Math.sin(Math.toRadians(angle)));
+    }
+
+    // Check for collision
+    void checkCollision(int currentX, int currentY, int canvasWidth, int canvasHeight, int diameter, Obstacle[] obs) {
+        // Ball collides with left boundary
+        if (currentX <= 0) {
+            bounce(true);
+        }
+
+        // Ball collides with right boundary
+        if (currentX >= canvasWidth - diameter) {
+            bounce(true);
+        }
+
+        // Ball collides with top boundary
+        if (currentY <= 0) {
+            bounce(false);
+        }
+
+        // Ball collides with paddle/misses paddle
+        if (currentY >= canvasHeight - 25 - diameter) {
+            if (engine.isAtPaddlePosition(currentX)) {
+                bounce(false);
+                engine.addPoints();
+                velocity += 0.3;
+            } else {
+                engine.loseLife();
+            }
+        }
+    }
+
+    // Bounce off a surface 
+    private void bounce(boolean vertical) {
+        if (vertical) {
+            this.signX *= -1;
+        } else {
+            this.signY *= -1;
+        }
+    }
+}
